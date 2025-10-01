@@ -1,0 +1,37 @@
+<?php
+
+namespace App\Models;
+
+class Post{
+
+    /* public $id; */
+    public $title;
+    public $slug;
+    public $technology; 
+    public $date; 
+    public $read_time_estimation;
+    public $author_name; 
+    public $author_degree;
+    public $summary;
+    public $content;
+    public $conclusion;
+    public $tags;
+    public $created_at; 
+    public $updated_at;
+
+
+    // Maps recieved array to a known structure
+    public function __construct(array $data = [])
+    {
+        foreach ($data as $key => $value) {
+            if (property_exists($this, $key)) {
+                $this->$key = $value;
+            }
+        }
+    }
+
+
+}
+
+
+?>
