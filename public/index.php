@@ -14,6 +14,8 @@ Dotenv\Dotenv::createImmutable(__DIR__ . '/..')->load();
 
 $app = AppFactory::create();
 
+$app->setBasePath('');
+
 $app->addErrorMiddleware(true, false, false);
 
 // CORS middleware
