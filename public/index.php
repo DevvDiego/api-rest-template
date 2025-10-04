@@ -14,7 +14,7 @@ Dotenv\Dotenv::createImmutable(__DIR__ . '/..')->load();
 
 $app = AppFactory::create();
 
-$app->setBasePath('');
+$app->setBasePath('/api');
 
 $app->addErrorMiddleware(true, false, false);
 
