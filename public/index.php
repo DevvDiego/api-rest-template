@@ -45,7 +45,7 @@ Add real verification of posts later
 */
 
 
-$app->get('/blog', function (Request $request, Response $response){
+$app->get('/blog[/]', function (Request $request, Response $response){
 
     $controller = new PostController();
 
@@ -61,7 +61,7 @@ $app->get('/blog', function (Request $request, Response $response){
 
 
 
-$app->get('/blog/{slug}', function (Request $request, Response $response, array $args){
+$app->get('/blog/{slug}[/]', function (Request $request, Response $response, array $args){
 
     $slug = $args["slug"];
 
