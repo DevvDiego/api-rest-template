@@ -4,6 +4,7 @@ namespace App\Database;
 
 use PDO;
 use PDOException;
+use PDOStatement;
 
 class Database{
 
@@ -51,7 +52,7 @@ class Database{
     }
     
     // Método helper para queries
-    public function query(string $sql, array $params = []){
+    public function query(string $sql, array $params = []): PDOStatement {
         $stmt = $this->connection->prepare($sql);
         $stmt->execute($params);
         
