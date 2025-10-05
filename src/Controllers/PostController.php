@@ -4,7 +4,7 @@ namespace App\Controllers;
 
 use App\Database\Database;
 use App\Models\Post;
-
+use PDOException;
 
 class PostController{
 
@@ -31,6 +31,52 @@ class PostController{
         }, $postsData);
         
 
+    }
+
+    /**
+     * Add new post
+     * 
+     * @return true on success
+     * @return false on failure
+     * @throws PDOException
+     */
+    public function new(array $post): bool {
+        
+        $post = new Post($post);
+        
+        $sql = "INSERT INTO posts 
+                (title, slug, technology, date, 
+                read_time_estimation, author_name, 
+                author_degree, summary, content, 
+                conclusion, tags) 
+                VALUES 
+                (:title, :slug, :technology, :date, 
+                :read_time_estimation, :author_name, 
+                :author_degree, :summary, :content, 
+                :conclusion, :tags)";
+        
+        $params = [
+            ':title' => $post->title,
+            ':slug' => $post->slug,
+            ':technology' => $post->technology,
+            ':date' => $post->date,
+            ':read_time_estimation' => $post->read_time_estimation,
+            ':author_name' => $post->author_name,
+            ':author_degree' => $post->author_degree,
+            ':summary' => $post->summary,
+            ':content' => $post->content,
+            ':conclusion' => $post->conclusion,
+            ':tags' => $post->tags
+        ];
+
+        $stmt = $this->db->query($sql, $params);
+        
+        if ( $stmt->rowCount() > 0 ) {
+            return true;
+        
+        }
+
+        return false;
     }
 
     /**
