@@ -6,6 +6,13 @@ use PDO;
 use PDOException;
 use PDOStatement;
 
+/**
+ * Singleton class
+
+ * Instances only one database connection per request
+
+ * Uses PDO Exception mode, and Fetch Assoc by default
+ */
 class Database{
 
     private static $instance = null;
@@ -51,7 +58,11 @@ class Database{
         return $this->connection;
     }
     
-    // Método helper para queries
+    /**
+     * Helper method to do querys using the current instance
+     * 
+     * @throws PDOException
+     */
     public function query(string $sql, array $params = []): PDOStatement {
         $stmt = $this->connection->prepare($sql);
         $stmt->execute($params);
