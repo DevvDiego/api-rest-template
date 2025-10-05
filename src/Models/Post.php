@@ -26,10 +26,24 @@ class Post{
         foreach ($data as $key => $value) {
             if (property_exists($this, $key)) {
                 $this->$key = $value;
+
+            }else{
+                throw new \InvalidArgumentException(
+                    "Post model creation found an unexpected property: '$key'. " .
+                    "Allowed properties: " . implode(', ', $this->getAllowedProperties())
+                );
+   
             }
         }
     }
 
+    /**
+     * Obtiene la lista de propiedades permitidas
+     */
+    private function getAllowedProperties(): array{
+        return array_keys(get_object_vars($this));
+        
+    }
 
 }
 
