@@ -42,41 +42,59 @@ class PostController{
      */
     public function new(array $post): bool {
         
-        $post = new Post($post);
-        
-        $sql = "INSERT INTO posts 
-                (title, slug, technology, date, 
-                read_time_estimation, author_name, 
-                author_degree, summary, content, 
-                conclusion, tags) 
-                VALUES 
-                (:title, :slug, :technology, :date, 
-                :read_time_estimation, :author_name, 
-                :author_degree, :summary, :content, 
-                :conclusion, :tags)";
-        
-        $params = [
-            ':title' => $post->title,
-            ':slug' => $post->slug,
-            ':technology' => $post->technology,
-            ':date' => $post->date,
-            ':read_time_estimation' => $post->read_time_estimation,
-            ':author_name' => $post->author_name,
-            ':author_degree' => $post->author_degree,
-            ':summary' => $post->summary,
-            ':content' => $post->content,
-            ':conclusion' => $post->conclusion,
-            ':tags' => $post->tags
-        ];
+        try {
+            
+            $post = new Post($post);
+            
+            $sql = "INSERT INTO posts 
+                    (title, slug, technology, date, 
+                    read_time_estimation, author_name, 
+                    author_degree, summary, content, 
+                    conclusion, tags) 
+                    VALUES 
+                    (:title, :slug, :technology, :date, 
+                    :read_time_estimation, :author_name, 
+                    :author_degree, :summary, :content, 
+                    :conclusion, :tags)";
+            
+            $params = [
+                ':title' => $post->title,
+                ':slug' => $post->slug,
+                ':technology' => $post->technology,
+                ':date' => $post->date,
+                ':read_time_estimation' => $post->read_time_estimation,
+                ':author_name' => $post->author_name,
+                ':author_degree' => $post->author_degree,
+                ':summary' => $post->summary,
+                ':content' => $post->content,
+                ':conclusion' => $post->conclusion,
+                ':tags' => $post->tags
+            ];
 
-        $stmt = $this->db->query($sql, $params);
-        
-        if ( $stmt->rowCount() > 0 ) {
-            return true;
-        
+            $stmt = $this->db->query($sql, $params);
+            
+            return $stmt->rowCount() > 0;
+                        
+        } catch (PDOException $e) {
+            
+            //Unique constraint violation MySQL code 
+            if ($e->getCode() == 23000) {
+                
+                if (str_contains($e->getMessage(), 'slug')) {
+                    throw new \Exception("Slug already exists");
+                }
+                if (str_contains($e->getMessage(), 'title')) {
+                    throw new \Exception("Title already exists");
+                }
+
+                throw new \Exception("Duplicate entry");
+
+            }
+            
+            // Rethrow any other exceptions
+            throw $e;
         }
 
-        return false;
     }
 
     /**
