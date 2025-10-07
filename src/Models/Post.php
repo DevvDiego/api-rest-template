@@ -22,6 +22,20 @@ class Post{
     // Maps recieved array to a known structure
     public function __construct(array $data = [])
     {
+
+        $required = ['title', 'slug'];
+
+        // Check if required properties exists and have some text atleast
+        foreach ($required as $key) {
+            if (!array_key_exists($key, $data)) {
+
+                throw new \InvalidArgumentException( "Missing required property: '$key'" );
+            }elseif($data[$key] === '') {
+                
+                throw new \InvalidArgumentException( "Required property '$key' cannot be empty" );
+            }
+        }
+
         foreach ($data as $key => $value) {
             if (property_exists($this, $key)) {
                 
