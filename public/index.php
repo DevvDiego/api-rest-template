@@ -3,7 +3,7 @@
 require __DIR__ . "/../vendor/autoload.php";
 
 use Slim\Factory\AppFactory;
-use Psr\Http\Message\RequestInterface as Request;
+use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
 
 use App\Controllers\PostController;
@@ -79,6 +79,53 @@ $app->get('/blog/{slug}[/]', function (Request $request, Response $response, arr
 
     return $response;
 });
+
+
+
+$app->post('/blog/post', function (Request $request, Response $response, array $args) {
+    try {
+
+        // parse data from the POST body
+        $data = $request->getParsedBody();
+                
+        if ( empty($data)) { throw new Exception("No data recieved"); }
+
+        $controller = new PostController();
+        // this will throw their own exception if properties dont match
+        $result = $controller->new($data);
+        
+        $responseData = [
+            'success' => true,
+            'message' => 'Success creating post',
+            'data' => $result
+        ];
+        
+        $response->getBody()->write(
+            json_encode($responseData)
+        );
+
+        return $response
+            ->withHeader('Content-Type', 'application/json')
+            ->withStatus(201); // 201 Created
+            
+    } catch(\Exception $e) {
+
+        $errorData = [
+            'success' => false,
+            'error' => $e->getMessage()
+        ];
+        
+        $response->getBody()->write(
+            json_encode($errorData)
+        );
+
+        return $response
+            ->withHeader('Content-Type', 'application/json')
+            ->withStatus(400); // 400 Bad Request
+    }
+});
+
+
 
 
 $app->run();
