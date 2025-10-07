@@ -106,7 +106,12 @@ class PostController{
     public function getPostById(int $id): ?Post {
         
         $postData = $this->db->query(
-            "SELECT * FROM posts WHERE id = ?",
+            "SELECT 
+                title, slug, technology, date, 
+                read_time_estimation, author_name, 
+                author_degree, summary, content, 
+                conclusion, tags 
+            FROM posts WHERE slug = ?",
             [$id]
         )->fetch();
         
@@ -117,7 +122,12 @@ class PostController{
     public function getPostBySlug(string $slug): ?Post {
 
         $postData = $this->db->query(
-            "SELECT * FROM posts WHERE slug = ?",
+            "SELECT 
+                title, slug, technology, date, 
+                read_time_estimation, author_name, 
+                author_degree, summary, content, 
+                conclusion, tags 
+            FROM posts WHERE slug = ?",
             [$slug]
         )->fetch();
         
