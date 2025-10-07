@@ -25,6 +25,12 @@ class Post{
     {
         foreach ($data as $key => $value) {
             if (property_exists($this, $key)) {
+                
+                if( $key == "content" ) {
+                    $this->$key = json_encode($value);
+                    return;
+                }
+                
                 $this->$key = $value;
 
             }else{
