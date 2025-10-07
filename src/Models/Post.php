@@ -4,17 +4,17 @@ namespace App\Models;
 
 class Post{
 
-    public string $title;
-    public string $slug;
-    public string $technology; 
-    public string $date; 
-    public string $read_time_estimation;
-    public string $author_name; 
-    public string $author_degree;
-    public string $summary;
-    public string $content;
-    public string $conclusion;
-    public string $tags;
+    public string $title = "";
+    public string $slug = "";
+    public string $technology = ""; 
+    public string $date = ""; 
+    public string $read_time_estimation = "";
+    public string $author_name = ""; 
+    public string $author_degree = "";
+    public string $summary = "";
+    public string $content = "";
+    public string $conclusion = "";
+    public string $tags = "";
     /* public $created_at; 
     public $updated_at; */
 
@@ -27,7 +27,7 @@ class Post{
                 
                 if( $key == "content" ) {
                     $this->$key = json_encode($value);
-                    return;
+                    continue;
                 }
                 
                 $this->$key = $value;
