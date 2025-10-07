@@ -4,20 +4,19 @@ namespace App\Models;
 
 class Post{
 
-    /* public $id; */
-    public $title;
-    public $slug;
-    public $technology; 
-    public $date; 
-    public $read_time_estimation;
-    public $author_name; 
-    public $author_degree;
-    public $summary;
-    public $content;
-    public $conclusion;
-    public $tags;
-    public $created_at; 
-    public $updated_at;
+    public string $title;
+    public string $slug;
+    public string $technology; 
+    public string $date; 
+    public string $read_time_estimation;
+    public string $author_name; 
+    public string $author_degree;
+    public string $summary;
+    public string $content;
+    public string $conclusion;
+    public string $tags;
+    /* public $created_at; 
+    public $updated_at; */
 
 
     // Maps recieved array to a known structure

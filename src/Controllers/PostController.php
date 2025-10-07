@@ -78,7 +78,10 @@ class PostController{
         } catch (PDOException $e) {
             
             //Unique constraint violation MySQL code 
-            if ($e->getCode() == 23000) {
+
+            //During development dont catch specific exceptions yet
+
+            /* if ($e->getCode() == 23000) {
                 
                 if (str_contains($e->getMessage(), 'slug')) {
                     throw new \Exception("Slug already exists");
@@ -89,7 +92,7 @@ class PostController{
 
                 throw new \Exception("Duplicate entry");
 
-            }
+            } */
             
             // Rethrow any other exceptions
             throw $e;
