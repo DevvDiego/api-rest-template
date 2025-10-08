@@ -16,6 +16,7 @@ $app = AppFactory::create();
 
 $app->setBasePath('/api');
 
+$app->addBodyParsingMiddleware();
 $app->addErrorMiddleware(true, false, false);
 
 // CORS middleware
@@ -71,11 +72,13 @@ $app->get('/blog/{slug}[/]', function (Request $request, Response $response, arr
 
     
     // Decodificar jsons internos
-    $post->content = json_decode($post->content, true);
-    $post->tags = json_decode($post->tags, true);
+    //decode content then encode all the post again
+    //that way DOUBLE encoding doesnt happen for content
+    $post->content = json_decode($post->content);
+    $post = json_encode($post);
 
-
-    $response->getBody()->write(json_encode($post));
+    $response->getBody()->write($post);
+    
 
     return $response;
 });
@@ -87,7 +90,9 @@ $app->post('/blog/post', function (Request $request, Response $response, array $
 
         // parse data from the POST body
         $data = $request->getParsedBody();
-                
+        $response->getBody()->write(json_encode($data));
+        
+        
         if ( empty($data)) { throw new Exception("No data recieved"); }
 
         $controller = new PostController();
@@ -124,8 +129,6 @@ $app->post('/blog/post', function (Request $request, Response $response, array $
             ->withStatus(400); // 400 Bad Request
     }
 });
-
-
 
 
 $app->run();
