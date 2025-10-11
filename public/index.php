@@ -131,6 +131,33 @@ $app->post('/blog/post', function (Request $request, Response $response, array $
 });
 
 
+/* 
+$app->post('/login', function (Request $request, Response $response, array $args){    
+    
+    
+    $data = $request->getParsedBody();
+    $hash = $_ENV["ADMIN_PASSWORD"];
+    $logged = false;
+
+    if( password_verify( $data["password"], $hash ) ){
+        $logged = true;
+    }
+
+    $response->getBody()->write(
+        json_encode(
+            [
+                'success' => $logged,
+                'message' => 'Log in successful'
+            ]
+        )
+    );
+    
+
+    return $response;
+});
+
+ */
+
 $app->run();
 
 ?>
