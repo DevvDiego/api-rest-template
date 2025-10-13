@@ -12,7 +12,7 @@ class Post{
     public string $author_name = ""; 
     public string $author_degree = "";
     public string $summary = "";
-    public string $content = "";
+    public array|string $content = ""; //array when decoding, string when encoded (JSON)
     public string $conclusion = "";
     public string $tags = "";
     /* public $created_at; 
@@ -38,11 +38,6 @@ class Post{
 
         foreach ($data as $key => $value) {
             if (property_exists($this, $key)) {
-                
-                if( $key == "content" ) {
-                    $this->$key = json_encode($value);
-                    continue;
-                }
                 
                 $this->$key = $value;
 
