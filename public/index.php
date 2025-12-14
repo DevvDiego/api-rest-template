@@ -45,6 +45,9 @@ Add real verification of posts later
 
 */
 
+
+// Add real/useful response codes with errors, standarized
+
 $app->get('/blog/debug/{slug}', function (Request $request, Response $response, array $args) {
     $controller = new PostController();
     $post = $controller->getPostBySlug($args['slug']);
@@ -221,32 +224,61 @@ $app->patch('/blog/post/{post_slug}', function (Request $request, Response $resp
 });
 
 
-/* 
+
 $app->post('/login', function (Request $request, Response $response, array $args){    
     
-    
-    $data = $request->getParsedBody();
-    $hash = $_ENV["ADMIN_PASSWORD"];
-    $logged = false;
+    try {
 
-    if( password_verify( $data["password"], $hash ) ){
-        $logged = true;
+        $logged = false;
+
+        $data = $request->getParsedBody();
+
+        if ( empty($data)) { throw new Exception("No data recieved"); }
+        if ( empty( $data["password"] ) ) { // add quick validation for any other important field
+            throw new Exception("One of the fields is missing data.");
+        }
+
+        
+        $stored_admin_hash = $_ENV["TEST_ADMIN_PASSWORD_HASH"];
+        $recieved_admin_password = $data["password"];
+
+
+        if( password_verify($recieved_admin_password, $stored_admin_hash) ){
+            $logged = true;
+        }
+
+
+        $response->getBody()->write(
+            json_encode(
+                [
+                    'success' => $logged
+                ]
+            )
+        );
+
+        
+    } catch (\Exception $e) {
+
+        $errorData = [
+            'success' => false,
+            'error' => $e->getMessage()
+        ];
+        
+        $response->getBody()->write(
+            json_encode($errorData)
+        );
+
+        return $response
+            ->withHeader('Content-Type', 'application/json')
+            ->withStatus(400); // 400 Bad Request
+
     }
-
-    $response->getBody()->write(
-        json_encode(
-            [
-                'success' => $logged,
-                'message' => 'Log in successful'
-            ]
-        )
-    );
     
 
     return $response;
 });
 
- */
+
 
 $app->run();
 
