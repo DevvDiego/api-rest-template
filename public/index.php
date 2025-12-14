@@ -164,6 +164,63 @@ $app->post('/blog/post', function (Request $request, Response $response, array $
 });
 
 
+
+$app->patch('/blog/post/{post_slug}', function (Request $request, Response $response, array $args) {
+    try {
+
+        $current_post_slug = $args["post_slug"];
+
+        // parse data from the POST body
+        $data = $request->getParsedBody();       
+        
+        if ( empty($data)) { throw new Exception("No data recieved"); }
+        if( empty($data["content"]) ) { throw new Exception("Recieved data, but no content is present."); } 
+        
+
+        //take responsability of encoding in the preparation layer
+        //encode to keep rich json structure
+        $data["content"] = json_encode($data["content"]);
+                
+
+        //after here, the data should be ready to get in the corresponding data model
+
+
+        $controller = new PostController();
+        // this will throw their own exception if properties dont match
+        $result = $controller->update($current_post_slug, $data);
+        
+        $responseData = [
+            'success' => true,
+            'message' => 'Success updating post',
+            'data' => $result
+        ];
+        
+        $response->getBody()->write(
+            json_encode($responseData)
+        );
+
+        return $response
+            ->withHeader('Content-Type', 'application/json')
+            ->withStatus(201); // 201 Created
+            
+    } catch(\Exception $e) {
+
+        $errorData = [
+            'success' => false,
+            'error' => $e->getMessage()
+        ];
+        
+        $response->getBody()->write(
+            json_encode($errorData)
+        );
+
+        return $response
+            ->withHeader('Content-Type', 'application/json')
+            ->withStatus(400); // 400 Bad Request
+    }
+});
+
+
 /* 
 $app->post('/login', function (Request $request, Response $response, array $args){    
     
