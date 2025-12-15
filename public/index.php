@@ -2,9 +2,12 @@
 
 require __DIR__ . "/../vendor/autoload.php";
 
+use App\Auth\JWTManager;
 use Slim\Factory\AppFactory;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\ResponseInterface as Response;
+
+use App\Middleware\AuthMiddleware;
 
 use App\Controllers\PostController;
 use App\Models\Post;
@@ -44,6 +47,85 @@ Add real verification of posts later
 --upload database and connect respective
 
 */
+
+
+// TESTING PROTECTED ROUTES
+$app->group('/admin', function ($group) {
+
+    $group->get('/posts', function (Request $request, Response $response) {   
+        
+        $user = $request->getAttribute('user'); // Info del JWT
+
+        $response->getBody()->write( json_encode(["success" => "dentro de admin/posts metodo GET"]) );
+
+        return $response
+            ->withHeader('Content-Type', 'application/json')
+            ->withStatus(201); // 201 Created
+
+    });
+    
+    $group->post('/posts', function (Request $request, Response $response) {
+
+        $response->getBody()->write( json_encode(["success" => "dentro de admin/posts metodo POST"]) );
+
+        return $response
+            ->withHeader('Content-Type', 'application/json')
+            ->withStatus(201); // 201 Created
+    });
+
+    
+})->add( new AuthMiddleware( new JWTManager( $_ENV["JWT_SECRET"] ) ) ); // Middleware aplicado a TODO el grupo
+
+
+$app->post('/admin/login', function (Request $request, Response $response) {
+    $data = $request->getParsedBody();
+    $password = $data['password'] ?? '1234';
+    
+    // 1. Obtener hash del admin desde .env
+    $adminHash = $_ENV["TEST_ADMIN_PASSWORD_HASH"];
+    
+    if (empty($adminHash)) {
+        return $this->errorResponse($response, 'Configuración incompleta', 500);
+    }
+    
+    // 2. Verificar contraseña (la más segura)
+    if (!password_verify($password, $adminHash)) {
+        // 6. Contraseña incorrecta
+        $response->getBody()->write( json_encode(
+            ['success' => false]
+        ));
+
+        return $response
+            ->withHeader('Content-Type', 'application/json')
+            ->withStatus(401); // 201 Created
+    }
+
+
+    // 3. Obtener instancia de JWT Manager del contenedor
+    $jwtManager = new JWTManager( $_ENV["JWT_SECRET"] );
+
+    // 4. Crear token
+    $token = $jwtManager->createToken('admin');
+
+    $response->getBody()->write( json_encode(
+        [
+            'success' => true,
+            'token' => $token,
+            'expires_in' => 24 * 3600, // 24 horas en segundos
+            'user' => [
+                'id' => 'admin',
+                'role' => 'admin'
+            ]
+        ]
+    ));
+
+    return $response
+        ->withHeader('Content-Type', 'application/json')
+        ->withStatus(201); // 201 Created    
+
+});
+
+
 
 
 // Add real/useful response codes with errors, standarized
