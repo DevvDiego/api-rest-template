@@ -10,9 +10,52 @@ use Psr\Http\Message\ResponseInterface as Response;
 use App\Middleware\AuthMiddleware;
 
 use App\Controllers\PostController;
+use App\Helpers\ResponseHelper;
 use App\Models\Post;
 
 Dotenv\Dotenv::createImmutable(__DIR__ . '/..')->load();
+
+
+/* 
+
+
+function json_success(int $code, $data = null, string $message = "OK", array $meta = []): Response {
+    $payload = [
+        "success" => true,
+        "message" => $message,
+        "data" => $data,
+        "meta" => $meta
+    ];
+    
+    if ($data !== null) $payload["data"] = $data;
+    if (!empty($meta)) $payload["meta"] = $meta;
+    
+    $response = new \Slim\Psr7\Response();
+    $response->getBody()->write(json_encode($payload));
+    return $response
+        ->withStatus($code)
+        ->withHeader('Content-Type', 'application/json');
+}
+
+function json_error(int $code, string $message, $data = null, array $meta = []): Response {
+    $payload = [
+        "success" => false,
+        "message" => $message,
+        "data" => $data,
+        "meta" => $meta
+    ];
+    
+    if ($data !== null) $payload["data"] = $data;
+    
+    $response = new \Slim\Psr7\Response();
+    $response->getBody()->write(json_encode($payload));
+    return $response
+        ->withStatus($code)
+        ->withHeader('Content-Type', 'application/json');
+}
+
+
+*/
 
 
 $app = AppFactory::create();
@@ -46,6 +89,48 @@ Add real verification of posts later
 
 
 $app->group('/admin', function ($group) {
+
+
+
+    $group->post('/valid', function (Request $request, Response $response, array $args) {
+        try {
+
+            // parse data from the POST body
+            // $data = $request->getParsedBody();       
+            
+            // if ( empty($data)) { throw new Exception("No data recieved"); }
+            // if( empty($data["content"]) ) { throw new Exception("Recieved data, but no content is present."); } 
+            
+            
+            $responseData = [
+                'success' => true,
+                'message' => 'Success validating token'
+            ];
+            
+            $response->getBody()->write(
+                json_encode($responseData)
+            );
+
+            return $response
+                ->withHeader('Content-Type', 'application/json')
+                ->withStatus(200); // 200 all good
+                
+        } catch(\Exception $e) {
+
+            $errorData = [
+                'success' => false,
+                'error' => $e->getMessage()
+            ];
+            
+            $response->getBody()->write(
+                json_encode($errorData)
+            );
+
+            return $response
+                ->withHeader('Content-Type', 'application/json')
+                ->withStatus(400); // 400 Bad Request
+        }
+    });
 
 
     
@@ -101,7 +186,6 @@ $app->group('/admin', function ($group) {
                 ->withStatus(400); // 400 Bad Request
         }
     });
-
 
 
 
@@ -162,7 +246,6 @@ $app->group('/admin', function ($group) {
 
 
 
-    
 })->add( new AuthMiddleware( new JWTManager( $_ENV["JWT_SECRET"] ) ) ); // Middleware aplicado a TODO el grupo
 
 
@@ -220,7 +303,7 @@ $app->post('/login', function (Request $request, Response $response) {
 
 // Add real/useful response codes with errors, standarized
 
-$app->get('/blog[/]', function (Request $request, Response $response){
+$app->get('/blog', function (Request $request, Response $response){
 
     $controller = new PostController();
 
@@ -229,29 +312,35 @@ $app->get('/blog[/]', function (Request $request, Response $response){
     //only fetching the latest posts we recieve basic info
     //so no need to decode stored jsons of content and tags
 
-    $response->getBody()->write(json_encode($posts));
+    return ResponseHelper::created(
+        "Created Successfully",
+        $posts
+    );
 
-    return $response;
 });
 
 
 
-$app->get('/blog/{slug}[/]', function (Request $request, Response $response, array $args){
+$app->get('/blog/{slug}', function (Request $request, Response $response, array $args){
 
     $slug = $args["slug"];
     $controller = new PostController();
     $post = $controller->getPostBySlug($slug);
+
+    if($post == null){
+        return ResponseHelper::notFound();
+    };
     
     // Decode the JSON string into a PHP structure
     // its needed to have this as an array so the later json encode
     // takes care and encodes only once correctly for the client
     $post->content = json_decode($post->content);
-
-    // Encode the entire object to JSON
-    $payload = json_encode($post);
-    $response->getBody()->write($payload);
     
-    return $response->withHeader('Content-Type', 'application/json');
+    return ResponseHelper::success(
+        "success",
+        [$post]
+    );
+
 });
 
 
