@@ -257,44 +257,26 @@ $app->post('/login', function (Request $request, Response $response) {
     
     $adminHash = $_ENV["TEST_ADMIN_PASSWORD_HASH"];
     
-    if (empty($adminHash)) {
-        return $this->errorResponse($response, 'Configuración incompleta', 500);
+    if ( empty($adminHash) ) {
+        return ResponseHelper::unauthorized();
     }
     
-    // Verificar contraseña (la más segura)
-    if (!password_verify($password, $adminHash)) {
-        // Contraseña incorrecta
-        $response->getBody()->write( json_encode(
-            ['success' => false]
-        ));
 
-        return $response
-            ->withHeader('Content-Type', 'application/json')
-            ->withStatus(401); // 201 Created
+    if ( !password_verify($password, $adminHash) ) {
+        return ResponseHelper::unauthorized();
     }
 
 
-    // Obtener instancia de JWTManager 
     $jwtManager = new JWTManager( $_ENV["JWT_SECRET"] );
-
-    // Crear token
     $token = $jwtManager->createToken('admin');
 
-    $response->getBody()->write( json_encode(
+    return ResponseHelper::success(
+        "Log in successfull",
         [
-            'success' => true,
-            'token' => $token,
-            'expires_in' => 24 * 3600, // 24 horas en segundos
-            'user' => [
-                'id' => 'admin',
-                'role' => 'admin'
-            ]
-        ]
-    ));
-
-    return $response
-        ->withHeader('Content-Type', 'application/json')
-        ->withStatus(201); // 201 Created    
+            "token" => $token,
+            "expires_in" => 24 * 3600 // 24 hrs
+        ],
+    );
 
 });
 
