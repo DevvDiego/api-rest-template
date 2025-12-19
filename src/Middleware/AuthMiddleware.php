@@ -5,6 +5,8 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as Handler;
 use Slim\Psr7\Response;
 
+use App\Helpers\ResponseHelper;
+
 class AuthMiddleware{
 
     private $jwtManager;
@@ -34,8 +36,9 @@ class AuthMiddleware{
         }
         
         // Verificar que sea admin // super especifico, deberia hacerlo general???
+        // En otro uso de la misma API este campo debe quitarse/comentarse
         if ( ($payload["role"] ?? "") !== "admin" ) {
-            return $this->unauthorized('Permisos insuficientes');
+            return $this->unauthorized("Insufficient privileges");
         }
         
         // Añadir informacion del usuario a la request
@@ -45,18 +48,11 @@ class AuthMiddleware{
         return $handler->handle($request);
     }
     
-    private function unauthorized(string $message): Response{
+    private function unauthorized(string $message = "Unauthorized"): Response{
 
-        $response = new Response();
-        $response->getBody()->write(json_encode([
-            'error' => 'Unauthorized',
-            'message' => $message,
-            'timestamp' => date('c')
-        ]));
-        
+        $response = ResponseHelper::unauthorized($message);
+
         return $response
-            ->withStatus(401)
-            ->withHeader('Content-Type', 'application/json')
             ->withHeader('WWW-Authenticate', 'Bearer');
     }
 }
