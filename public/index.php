@@ -92,46 +92,25 @@ $app->group('/admin', function ($group) {
 
 
 
-    /*$group->post('/valid', function (Request $request, Response $response, array $args) {
-            try {
+    $group->post('/verify', function (Request $request, Response $response, array $args) {
+        try {            
+        
+            // the simple fact of a request reaching this point,
+            // means it passed the auth middlewate, therefore the token is valid.
 
-                // parse data from the POST body
-                // $data = $request->getParsedBody();       
+            return ResponseHelper::success(
+                "Valid token"
+            );
                 
-                // if ( empty($data)) { throw new Exception("No data recieved"); }
-                // if( empty($data["content"]) ) { throw new Exception("Recieved data, but no content is present."); } 
-                
-            
-                $responseData = [
-                    'success' => true,
-                    'message' => 'Success validating token'
-                ];
-                
-                $response->getBody()->write(
-                    json_encode($responseData)
-                );
+        } catch(\Exception $e) {
 
-                return $response
-                    ->withHeader('Content-Type', 'application/json')
-                    ->withStatus(200); // 200 all good
-                    
-            } catch(\Exception $e) {
+            return ResponseHelper::error(
+                $e->getMessage()
+            );
 
-                $errorData = [
-                    'success' => false,
-                    'error' => $e->getMessage()
-                ];
-                
-                $response->getBody()->write(
-                    json_encode($errorData)
-                );
-
-                return $response
-                    ->withHeader('Content-Type', 'application/json')
-                    ->withStatus(400); // 400 Bad Request
-            }
-        });
-    */
+        }
+    });
+   
 
     
     $group->post('/blog/post', function (Request $request, Response $response, array $args) {
