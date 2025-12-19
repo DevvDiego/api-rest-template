@@ -92,46 +92,46 @@ $app->group('/admin', function ($group) {
 
 
 
-    $group->post('/valid', function (Request $request, Response $response, array $args) {
-        try {
+    /*$group->post('/valid', function (Request $request, Response $response, array $args) {
+            try {
 
-            // parse data from the POST body
-            // $data = $request->getParsedBody();       
-            
-            // if ( empty($data)) { throw new Exception("No data recieved"); }
-            // if( empty($data["content"]) ) { throw new Exception("Recieved data, but no content is present."); } 
-            
-            
-            $responseData = [
-                'success' => true,
-                'message' => 'Success validating token'
-            ];
-            
-            $response->getBody()->write(
-                json_encode($responseData)
-            );
-
-            return $response
-                ->withHeader('Content-Type', 'application/json')
-                ->withStatus(200); // 200 all good
+                // parse data from the POST body
+                // $data = $request->getParsedBody();       
                 
-        } catch(\Exception $e) {
-
-            $errorData = [
-                'success' => false,
-                'error' => $e->getMessage()
-            ];
+                // if ( empty($data)) { throw new Exception("No data recieved"); }
+                // if( empty($data["content"]) ) { throw new Exception("Recieved data, but no content is present."); } 
+                
             
-            $response->getBody()->write(
-                json_encode($errorData)
-            );
+                $responseData = [
+                    'success' => true,
+                    'message' => 'Success validating token'
+                ];
+                
+                $response->getBody()->write(
+                    json_encode($responseData)
+                );
 
-            return $response
-                ->withHeader('Content-Type', 'application/json')
-                ->withStatus(400); // 400 Bad Request
-        }
-    });
+                return $response
+                    ->withHeader('Content-Type', 'application/json')
+                    ->withStatus(200); // 200 all good
+                    
+            } catch(\Exception $e) {
 
+                $errorData = [
+                    'success' => false,
+                    'error' => $e->getMessage()
+                ];
+                
+                $response->getBody()->write(
+                    json_encode($errorData)
+                );
+
+                return $response
+                    ->withHeader('Content-Type', 'application/json')
+                    ->withStatus(400); // 400 Bad Request
+            }
+        });
+    */
 
     
     $group->post('/blog/post', function (Request $request, Response $response, array $args) {
@@ -140,8 +140,13 @@ $app->group('/admin', function ($group) {
             // parse data from the POST body
             $data = $request->getParsedBody();       
             
-            if ( empty($data)) { throw new Exception("No data recieved"); }
-            if( empty($data["content"]) ) { throw new Exception("Recieved data, but no content is present."); } 
+            if ( empty($data)) { 
+                throw new Exception("No data recieved");
+            }
+
+            if( empty($data["content"]) ) { 
+                throw new Exception("Recieved data, but no content is present."); 
+            }
             
 
             //take responsability of encoding in the preparation layer
@@ -156,34 +161,17 @@ $app->group('/admin', function ($group) {
             // this will throw their own exception if properties dont match
             $result = $controller->new($data);
             
-            $responseData = [
-                'success' => true,
-                'message' => 'Success creating post',
-                'data' => $result
-            ];
-            
-            $response->getBody()->write(
-                json_encode($responseData)
+            return ResponseHelper::success(
+                "success",
+                [$result]
             );
-
-            return $response
-                ->withHeader('Content-Type', 'application/json')
-                ->withStatus(201); // 201 Created
                 
         } catch(\Exception $e) {
 
-            $errorData = [
-                'success' => false,
-                'error' => $e->getMessage()
-            ];
-            
-            $response->getBody()->write(
-                json_encode($errorData)
+            return ResponseHelper::error(
+                $e->getMessage()
             );
 
-            return $response
-                ->withHeader('Content-Type', 'application/json')
-                ->withStatus(400); // 400 Bad Request
         }
     });
 
@@ -213,34 +201,17 @@ $app->group('/admin', function ($group) {
             // this will throw their own exception if properties dont match
             $result = $controller->update($current_post_slug, $data);
             
-            $responseData = [
-                'success' => true,
-                'message' => 'Success updating post',
-                'data' => $result
-            ];
-            
-            $response->getBody()->write(
-                json_encode($responseData)
+            return ResponseHelper::success(
+                "success",
+                [$result]
             );
-
-            return $response
-                ->withHeader('Content-Type', 'application/json')
-                ->withStatus(201); // 201 Created
                 
         } catch(\Exception $e) {
 
-            $errorData = [
-                'success' => false,
-                'error' => $e->getMessage()
-            ];
-            
-            $response->getBody()->write(
-                json_encode($errorData)
+            return ResponseHelper::error(
+                $e->getMessage()
             );
 
-            return $response
-                ->withHeader('Content-Type', 'application/json')
-                ->withStatus(400); // 400 Bad Request
         }
     });
 
