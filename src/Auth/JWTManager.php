@@ -57,22 +57,22 @@ class JWTManager{
 
         } catch (ExpiredException $e) {
             // Token expirado
-            error_log('Token expirado: ' . $e->getMessage());
+            error_log('Token expirado: ' . $e->getMessage() . " Timestamp: " . time());
             return null;
 
         } catch (SignatureInvalidException $e) {
             // Firma invalida - posible intento de manipulación
-            error_log('Firma JWT inválida: ' . $e->getMessage());
+            error_log('Firma JWT inválida: ' . $e->getMessage() . " Timestamp: " . time());
             return null;
 
         } catch (DomainException | UnexpectedValueException $e) {
             // Token mal formado
-            error_log('Token JWT mal formado: ' . $e->getMessage());
+            error_log('Token JWT mal formado: ' . $e->getMessage() . " Timestamp: " . time());
             return null;
 
         } catch (\Exception $e) {
             // Cualquier otro error
-            error_log('Error validando JWT: ' . $e->getMessage());
+            error_log('Error validando JWT: ' . $e->getMessage() . " Timestamp: " . time());
             return null;
 
         }
