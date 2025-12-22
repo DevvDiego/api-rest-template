@@ -142,6 +142,7 @@ $app->group('/admin', function ($group) {
             
             return ResponseHelper::success(
                 "success",
+                200,
                 [$result]
             );
                 
@@ -182,6 +183,7 @@ $app->group('/admin', function ($group) {
             
             return ResponseHelper::success(
                 "success",
+                200,
                 [$result]
             );
                 
@@ -222,6 +224,7 @@ $app->post('/login', function (Request $request, Response $response) {
 
     return ResponseHelper::success(
         "Log in successfull",
+        200,
         [
             "token" => $token,
             "expires_in" => 24 * 3600 // 24 hrs
@@ -244,8 +247,9 @@ $app->get('/blog', function (Request $request, Response $response){
     //only fetching the latest posts we recieve basic info
     //so no need to decode stored jsons of content and tags
 
-    return ResponseHelper::created(
-        "Created Successfully",
+    return ResponseHelper::success(
+        "success",
+        200,
         $posts
     );
 
@@ -270,6 +274,7 @@ $app->get('/blog/{slug}', function (Request $request, Response $response, array 
     
     return ResponseHelper::success(
         "success",
+        200,
         [$post]
     );
 
