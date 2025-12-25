@@ -28,8 +28,13 @@ cp .env.example .env
 * `DB_*`, etc. (Database configuration)
 * `ADMIN_PASSWORD_HASH`: The hash of the admin account password.
 
+**Tip:** To create quickly your admin hash, type the following command:
+```bash
+php -r "echo password_hash('your_password', PASSWORD_BCRYPT);"
 
+```
 ---
+
 
 ## 🔐 Security and Auth
 
