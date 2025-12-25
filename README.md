@@ -42,9 +42,9 @@ To simplify the API and maximize reutilization, it's designed under a model of *
 
 ## 🤝 Contributions
 
-Contributions is what makes open source an amazing place to learn and create. This project can improve drastically, therefore **any contribution is welcome**.
+Contributions are what make open source an amazing place to learn and create. This project can improve drastically, therefore **any contribution is welcome**.
 
-If you have any improvement idea for the API (security, performance, new base routes, etc.), feel free to follow this steps to contribute:
+If you have any improvement idea for the API (security, performance, new base routes, etc.), feel free to follow these steps to contribute:
 
 1. **Make a fork** of the proyect.
 2. **Create a branch** where you specify your contribution (`git checkout -b feature/improvement`).
