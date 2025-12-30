@@ -28,9 +28,16 @@ cp .env.example .env
 * `DB_*`, etc. (Database configuration)
 * `ADMIN_PASSWORD_HASH`: The hash of the admin account password.
 
-**Tip:** To create quickly your admin hash, type the following command:
+**Tip:** To create quickly your admin password (hashed), type the following command:
 ```bash
 php -r "echo password_hash('your_password', PASSWORD_BCRYPT);"
+
+```
+
+**Tip:** To create your JWT, type the following command (Minimun of 32 characters):
+```bash
+
+php -r "echo bin2hex(random_bytes(32));"
 
 ```
 ---
