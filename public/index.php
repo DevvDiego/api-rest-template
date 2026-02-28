@@ -11,56 +11,13 @@ use App\Middleware\AuthMiddleware;
 
 use App\Controllers\PostController;
 use App\Helpers\ResponseHelper;
-use App\Models\Post;
 
 Dotenv\Dotenv::createImmutable(__DIR__ . '/..')->load();
 
 
-/* 
-
-
-function json_success(int $code, $data = null, string $message = "OK", array $meta = []): Response {
-    $payload = [
-        "success" => true,
-        "message" => $message,
-        "data" => $data,
-        "meta" => $meta
-    ];
-    
-    if ($data !== null) $payload["data"] = $data;
-    if (!empty($meta)) $payload["meta"] = $meta;
-    
-    $response = new \Slim\Psr7\Response();
-    $response->getBody()->write(json_encode($payload));
-    return $response
-        ->withStatus($code)
-        ->withHeader('Content-Type', 'application/json');
-}
-
-function json_error(int $code, string $message, $data = null, array $meta = []): Response {
-    $payload = [
-        "success" => false,
-        "message" => $message,
-        "data" => $data,
-        "meta" => $meta
-    ];
-    
-    if ($data !== null) $payload["data"] = $data;
-    
-    $response = new \Slim\Psr7\Response();
-    $response->getBody()->write(json_encode($payload));
-    return $response
-        ->withStatus($code)
-        ->withHeader('Content-Type', 'application/json');
-}
-
-
-*/
-
-
 $app = AppFactory::create();
 
-$app->setBasePath('/api');
+// $app->setBasePath('');
 
 $app->addBodyParsingMiddleware();
 $app->addErrorMiddleware(true, false, false);
@@ -207,7 +164,7 @@ $app->post('/login', function (Request $request, Response $response) {
     $data = $request->getParsedBody();
     $password = $data['password'] ?? '';
     
-    $adminHash = $_ENV["TEST_ADMIN_PASSWORD_HASH"];
+    $adminHash = $_ENV["ADMIN_PASSWORD_HASH"];
     
     if ( empty($adminHash) ) {
         return ResponseHelper::unauthorized();
@@ -236,7 +193,6 @@ $app->post('/login', function (Request $request, Response $response) {
 
 
 
-// Add real/useful response codes with errors, standarized
 
 $app->get('/blog', function (Request $request, Response $response){
 
