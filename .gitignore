@@ -1,3 +1,4 @@
 /vendor
 *.sql
 *.env
+test.php
