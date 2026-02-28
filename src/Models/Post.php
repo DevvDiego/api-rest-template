@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-class Post{
+class Post extends Model {
 
     public string $title = "";
     public string $slug = "";
@@ -18,48 +18,6 @@ class Post{
     /* public $created_at; 
     public $updated_at; */
 
-
-    // Maps recieved array to a known structure
-    public function __construct(array $data = [])
-    {
-
-        $required = ['title', 'slug'];
-
-        // Check if required properties exists and have some text atleast
-        foreach ($required as $key) {
-            if (!array_key_exists($key, $data)) {
-
-                throw new \InvalidArgumentException( "Missing required property: '$key'" );
-            }elseif($data[$key] === '') {
-                
-                throw new \InvalidArgumentException( "Required property '$key' cannot be empty" );
-            }
-        }
-
-        foreach ($data as $key => $value) {
-            if (property_exists($this, $key)) {
-                
-                $this->$key = $value;
-
-            }else{
-                throw new \InvalidArgumentException(
-                    "Post model creation found an unexpected property: '$key'. " .
-                    "Allowed properties: " . implode(', ', $this->getAllowedProperties())
-                );
-   
-            }
-        }
-    }
-
-    /**
-     * Obtiene la lista de propiedades permitidas
-     */
-    private function getAllowedProperties(): array{
-        return array_keys(get_object_vars($this));
-        
-    }
-
 }
-
 
 ?>
