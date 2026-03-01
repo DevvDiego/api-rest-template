@@ -1,3 +1,8 @@
+## Barebones API REST Template
+This template was made with the idea of being easy to modify for small projects, no large dependencies and simple structure.
+
+There will be another version which will make use of Dependency injection and Eloquent ORM, still simple but more complete for a real use case.
+
 ## Quick start guide
 
 Follow this instructions to start using the API in your local enviroment
